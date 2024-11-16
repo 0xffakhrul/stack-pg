@@ -6,6 +6,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
+import { Register } from "./pages/Register";
 
 function App() {
   const queryClient = new QueryClient();
@@ -16,6 +17,7 @@ function App() {
         <AuthProvider>
           <Layout>
             <Routes>
+              <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route
                 path="/"
@@ -29,7 +31,7 @@ function App() {
           </Layout>
         </AuthProvider>
       </BrowserRouter>
-      <Toaster />
+      <Toaster/>
     </QueryClientProvider>
   );
 }
