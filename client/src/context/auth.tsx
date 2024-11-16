@@ -4,7 +4,7 @@ import { api } from "../lib/axios";
 import { User } from "../types";
 
 interface AuthContextType {
-  user: User | undefined;
+  user: User | undefined | null;
   isLoading: boolean;
 }
 
@@ -18,9 +18,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data } = await api.get<User>("/auth/me");
         return data;
       } catch (error) {
-        return undefined;
+        return null;
       }
     },
+    staleTime: 1000 * 60 * 5,
+    retry: false,
   });
 
   return (

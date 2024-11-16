@@ -1,19 +1,20 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 import { api } from "../lib/axios";
 import toast from "react-hot-toast";
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(5, "Password must be at least 5 characters"),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type RegisterForm = z.infer<typeof registerSchema>;
 
-export function Login() {
+export function Register() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -21,19 +22,19 @@ export function Login() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const loginMutation = useMutation({
-    mutationFn: (data: LoginForm) => api.post("/auth/login", data),
+  const registerMutation = useMutation({
+    mutationFn: (data: RegisterForm) => api.post("/auth/register", data),
     onSuccess: (response) => {
       queryClient.setQueryData(["auth-user"], response.data);
-      toast.success("Logged in successfully!");
+      toast.success("Registered successfully!");
       navigate("/", { replace: true });
     },
     onError: () => {
-      toast.error("Invalid email or password");
+      toast.error("Registration failed. Email might already be registered.");
     },
   });
 
@@ -42,14 +43,30 @@ export function Login() {
       <div className="space-y-3 pt-16 flex flex-col items-center">
         <h1 className="text-5xl font-bold text-white">Stack</h1>
         <h1 className="text-2xl font-bold text-zinc-300">
-          Save. Organize. Manage.
+          Join Stack Today
         </h1>
       </div>
       <form
-        onSubmit={handleSubmit((data) => loginMutation.mutate(data))}
+        onSubmit={handleSubmit((data) => registerMutation.mutate(data))}
         className="pt-7"
       >
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-white pb-3">
+              Name
+            </label>
+            <input
+              type="text"
+              {...register("name")}
+              className="rounded-sm bg-transparent border border-zinc-600 py-2 px-4 w-full text-white"
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-white pb-3">
               Email
@@ -66,7 +83,7 @@ export function Login() {
             )}
           </div>
 
-          <div> 
+          <div>
             <label className="block text-sm font-medium text-white pb-3">
               Password
             </label>
@@ -84,10 +101,10 @@ export function Login() {
 
           <button
             type="submit"
-            disabled={loginMutation.isPending}
+            disabled={registerMutation.isPending}
             className="bg-zinc-700 w-full flex justify-center py-2 px-4 border border-zinc-600 rounded-sm text-sm font-medium text-white hover:bg-zinc-800 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loginMutation.isPending ? "Loading..." : "Login"}
+            {registerMutation.isPending ? "Loading..." : "Register"}
           </button>
         </div>
       </form>
