@@ -40,9 +40,11 @@ export const register = async (
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost"
     });
 
     const userResponse: UserResponse = {
@@ -87,9 +89,11 @@ export const login = async (
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost"
     });
 
     const userResponse: UserResponse = {
@@ -106,7 +110,14 @@ export const login = async (
 };
 
 export const logout = (_req: Request, res: Response): void => {
-  res.clearCookie("token");
+  res.cookie("token", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 0,
+    path: "/",
+    domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost"
+  });
   res.json({ message: "logged out successfully" });
 };
 
