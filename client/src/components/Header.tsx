@@ -14,8 +14,11 @@ export const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <Link to="/" className="flex items-center text-white font-medium">
-              Stack
+            <Link
+              to="/"
+              className="flex gap-2 items-center text-white font-medium"
+            >
+              <img src="./favicon-16x16.png" alt="" /> <span>Stack</span>
             </Link>
           </div>
           {user ? (
