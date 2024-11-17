@@ -2,24 +2,13 @@ import { Request, Response } from "express";
 import pool from "../db";
 import { fetchMetadata } from "../utils/metadata";
 
-interface Bookmark {
-  id: number;
-  created_at: Date;
-  title: string;
-  description: string;
-  url: string;
-  tags: string[];
-  user_id: number;
-  favicon: string;
-}
-
 export const createBookmark = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const { url, tags } = req.body;
-    const userId = req.user?.id; 
+    const userId = req.user?.id;
 
     //fetch metadata
     const metadata = await fetchMetadata(url);

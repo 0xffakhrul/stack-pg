@@ -11,3 +11,14 @@ export interface UserResponse {
   email: string;
   name: string;
 }
+
+export interface Bookmark {
+  id: number;
+  created_at: Date;
+  title: string;
+  description: string;
+  url: string;
+  tags: string[];
+  user_id: number;
+  favicon: string;
+}
