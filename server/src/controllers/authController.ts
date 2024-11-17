@@ -43,8 +43,7 @@ export const register = async (
       secure: true,
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/",
-      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost"
+      path: "/"
     });
 
     const userResponse: UserResponse = {
@@ -92,8 +91,7 @@ export const login = async (
       secure: true,
       sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/",
-      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost"
+      path: "/"
     });
 
     const userResponse: UserResponse = {
@@ -115,8 +113,7 @@ export const logout = (_req: Request, res: Response): void => {
     secure: true,
     sameSite: "none",
     maxAge: 0,
-    path: "/",
-    domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost"
+    path: "/"
   });
   res.json({ message: "logged out successfully" });
 };
