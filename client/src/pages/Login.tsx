@@ -5,6 +5,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/axios";
 import toast from "react-hot-toast";
+import { Loading } from "../components/Loading";
+import { useAuth } from "../context/auth";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -16,6 +18,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 export function Login() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { isLoading } = useAuth();
 
   const {
     register,
@@ -36,6 +39,10 @@ export function Login() {
       toast.error("Invalid email or password");
     },
   });
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="max-w-md mx-auto">
