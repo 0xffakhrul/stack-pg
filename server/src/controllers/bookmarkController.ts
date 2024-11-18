@@ -101,3 +101,29 @@ export const deleteBookmark = async (
     res.status(500).json({ error: "Failed to delete bookmark" });
   }
 };
+
+export const updateBookmarkTags = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { tags } = req.body;
+    const userId = req.user?.id;
+
+    const result = await pool.query(
+      "UPDATE bookmarks SET tags = $1 WHERE id = $2 AND user_id = $3 RETURNING *",
+      [tags, id, userId]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "bookmark not found" });
+      return;
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("error updating bookmark tags:", error);
+    res.status(500).json({ error: "Failed to updatr bookmark tags" });
+  }
+};

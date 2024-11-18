@@ -1,13 +1,36 @@
 import { Bookmark } from "../types/index";
-import * as Popover from '@radix-ui/react-popover';
-import { MoreVertical, Trash2 } from 'lucide-react';
+import * as Popover from "@radix-ui/react-popover";
+import { MoreVertical, Trash2, Plus } from "lucide-react";
+import { useState } from "react";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
   onDelete?: (id: string) => void;
+  onUpdateTags?: (id: string, newTags: string[]) => void;
 }
 
-export const BookmarkCard = ({ bookmark, onDelete }: BookmarkCardProps) => {
+export const BookmarkCard = ({
+  bookmark,
+  onDelete,
+  onUpdateTags,
+}: BookmarkCardProps) => {
+  const [newTag, setNewTag] = useState("");
+
+  const handleAddTag = (e?: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e && e.key !== "Enter") return;
+
+    if (newTag.trim()) {
+      const updatedTags = [...bookmark.tags, newTag.trim()];
+      onUpdateTags?.(bookmark.id, updatedTags);
+      setNewTag("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    const updatedTags = bookmark.tags.filter((tag) => tag !== tagToRemove);
+    onUpdateTags?.(bookmark.id, updatedTags);
+  };
+
   return (
     <div className="bg-zinc-900 p-4 rounded-sm border border-zinc-600 relative">
       <div className="flex items-center justify-between">
@@ -17,7 +40,7 @@ export const BookmarkCard = ({ bookmark, onDelete }: BookmarkCardProps) => {
           )}
           <h3 className="text-lg font-semibold text-white">{bookmark.title}</h3>
         </div>
-        
+
         <Popover.Root>
           <Popover.Trigger asChild>
             <button className="text-gray-400 hover:text-gray-300">
@@ -48,15 +71,38 @@ export const BookmarkCard = ({ bookmark, onDelete }: BookmarkCardProps) => {
       >
         Visit site
       </a>
-      <div className="flex gap-2 mt-2">
+
+      <div className="flex flex-wrap gap-2 pt-4 items-center">
         {bookmark.tags.map((tag, index) => (
           <span
             key={index}
-            className="bg-gray-700 px-2 py-1 rounded-full text-sm"
+            className="bg-gray-700 text-gray-400 px-2 py-1 rounded-sm text-sm group flex items-center gap-1"
           >
             {tag}
+            <button
+              onClick={() => handleRemoveTag(tag)}
+              className="text-gray-400 pl-1"
+            >
+              ×
+            </button>
           </span>
         ))}
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddTag()}
+            placeholder="add tags..."
+            className="bg-transparent text-sm text-zinc-500 w-[80px] focus:outline-none"
+          />
+          <button
+            onClick={() => handleAddTag()}
+            className="text-zinc-400 hover:text-zinc-300"
+          >
+            <Plus size={16} />
+          </button>
+        </div>
       </div>
     </div>
   );
